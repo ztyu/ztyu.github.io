@@ -1,0 +1,270 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>jvm | idiot-yu</title>
+  <meta name="author" content="idiot-yu">
+  
+  <meta name="description" content="java python hexo">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="jvm"/>
+  <meta property="og:site_name" content="idiot-yu"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link rel="alternate" href="/atom.xml" title="idiot-yu" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <!-- wumiiVerification -->
+  <meta name="wumiiVerification" content="fb50a101-84fe-4ca2-91a7-ae8cf792978b" />
+  <meta name="wumiiVerification" content="d73b5866-c390-4156-a4dd-51b526b5335e" />
+  <!-- favicon -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <!-- Font-Awesome -->
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+</head>
+
+<body>
+  <header id="header"><div class= "header-content inner">
+	<div class = "alignleft col-one">
+		
+			<div class='avatar'>
+				<img src = "/img/default/avatar.png">
+              </div>
+		
+		<div class="header-div">
+		    <h1><a href="/">idiot-yu</a></h1>
+		    <h2><a href="/">Time never returns</a></h2>
+		</div>
+	</div>
+	<div class = "alignright col-two">
+		
+	</div>
+	<div class="clearfix"></div>
+</div>
+
+<div class= "header-nav">
+	<div class='header-nav-content inner'>
+		<div id="main-nav" class="alignleft">
+		    		
+		    		  <a href="/"><i class="fa fa-home"></i>Home</a>
+		    		
+		    		  <a href="/archives"><i class="fa fa-archive"></i>Archives</a>
+		    		
+		</div>
+		<div id="sub-nav" class="alignright">
+		    
+		      <a href="/about"><i class="fa fa-user"></i>About</a>
+		    
+		</div>
+	</div>
+	<div class="clearfix"></div>
+</div>
+</header>
+  
+    <div id="content" class="inner">
+      <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        
+        <time datetime="2018-02-09T00:48:24.000Z"><a href="/2018/02/09/jvm/">2018-02-09</a></time>
+        
+  
+    <h1 class="title">jvm</h1>
+  
+
+    </header>
+
+    <div class="entry">
+      
+        
+    <div id="toc">
+        
+    </div>
+
+        <font color="#555" size="4" face="微软雅黑"><br><img src="/img/default/jvm.jpg"><br>栈(stack):是一个先进后出的数据结构,通常用于保存方法(函数)中的参数,局部变量.<br>在java中,所有基本类型和引用类型都在栈中存储.栈中数据的生存空间一般在当前scopes内(就是由{…}括起来的区域).<br>堆(heap):是一个可动态申请的内存空间(其记录空闲内存空间的链表由操作系统维护),C中的malloc语句所产生的内存空间就在堆中.<br>在java中,所有使用new xxx()构造出来的对象都在堆中存储,当垃圾回收器检测到某对象未被引用,则自动销毁该对象.所以,理论上说java中对象的生存空间是没有限制的,只要有引用类型指向它,则它就可以在任意地方被使用.<br>&nbsp;&nbsp;&nbsp;&nbsp;Eden Survivor0 Survivor1 8:1:1<br>&nbsp;&nbsp;&nbsp;&nbsp;新生代和老年代 内存大小比例1:2<br>&nbsp;&nbsp;&nbsp;&nbsp;Young + old + perm构成了HotSpot VM的整个GC堆。<br>&nbsp;&nbsp;&nbsp;&nbsp;1 绝大多数刚创建的对象会被分配在Eden区，其中的大多数对象很快就会消亡。Eden区是连续的内存空间，因此在其上分配内存极快；<br>&nbsp;&nbsp;&nbsp;&nbsp;2 当Eden区满的时候，执行Minor GC，将消亡的对象清理掉，并将剩余的对象复制到一个存活区Survivor0（此时，Survivor1是空白的，两个Survivor总有一个是空白的）；<br>此后，每次Eden区满了，就执行一次Minor GC，并将剩余的对象都添加到Survivor0；<br>&nbsp;&nbsp;&nbsp;&nbsp;3 当Survivor0也满的时候，将其中仍然活着的对象直接复制到Survivor1，以后Eden区执行Minor GC后，就将剩余的对象添加Survivor1（此时，Survivor0是空白的）。两个Survivor可以保证 新进入Survivor区的 避免进入同一个Survivor 避免产生内存碎片化<br>&nbsp;&nbsp;4 当两个存活区切换了几次（HotSpot虚拟机默认15次，用-XX:MaxTenuringThreshold控制，大于该值进入老年代，但这只是个最大值，并不代表一定是这个值）之后，仍然存活的对象（其实只有一小部分，比如，我们自己定义的对象），将被复制到老年代。<br>新生代对象达到阈值会直接进入老年代 ,老年代满了会进行full gc<br>内存利用率高是为什么呢？是利用新生代存活率低不需要预留太多内存。而老年代为什么不行呢？<br>因为老年代存活率高，你回收需要预留比较大的空间。这样的话内存利用率就比较低，所以考虑到这个老年代就用标记清除或者标记整理的方法,标记清楚会产生内存碎片.<br>  <a id="more"></a><br>&nbsp;&nbsp;&nbsp;&nbsp;引用计数法 根搜索算法：JVM一般使用的标记算法，把对象的引用看作图结构，<br>由根节点集合出发<br> &nbsp;&nbsp;&nbsp;&nbsp;Parallel收集器 与ParNew类似，复制算法、并行回收、“Stop the world”机制，但是与ParNew不同，Parallel可以控制程序吞吐量大小，<br>也被称为吞吐量优先的垃圾收集器。 与Serial类似，Parallel也有老年代版本，Parallel Old，同样采用标记整理-算法。 Parallel+Parallel Old非常适用于服务器场景。<br> &nbsp;&nbsp;&nbsp;&nbsp;CMS收集器 与Parallel的高吞吐对应，CMS就是为高并发、低延时而生的。采用标记-清除算法、并行回收、“Stop the world”。<br>因为采用了标记-清除算法，会产生大量内存碎片，要慎重使用。<br> &nbsp;&nbsp;&nbsp;&nbsp;G1收集器 是一款基于并行、并发、低延时、暂停时间可控的区域化分代式垃圾回收器。<br>具有革命意义的设计，放弃了堆区年轻代、老年代的划分方案，而是将堆区或分成约2048个大小相同的独立Region块。<br> &nbsp;&nbsp;&nbsp;&nbsp;G1跟踪各个Region里面的垃圾堆积的价值大小（回收所获得的空间大小以及回收所需时间的经验值）， 在后台维护一个优先列表，每次根据允许的收集时间，优先回价值最大的Region（这也就是Garbage-First名称 的来由）。<br>这种使用Region划分内存空间以及有优先级的区域回收方式，保证了G1收集器在有限的时间内获可 以获取尽可能高的收集效率。<br><br>参考网站<br><a href="https://www.cnblogs.com/aspirant/p/6841955.html" target="_blank" rel="noopener">https://www.cnblogs.com/aspirant/p/6841955.html</a><br><a href="http://blog.csdn.net/hupoling/article/details/62887251" target="_blank" rel="noopener">http://blog.csdn.net/hupoling/article/details/62887251</a><br>jdk下有jvm工具 jvisulVm jps命令定位问题<br><a href="http://www.360doc.com/content/16/1120/18/31775152_608041991.shtml" target="_blank" rel="noopener">http://www.360doc.com/content/16/1120/18/31775152_608041991.shtml</a><br><a href="http://mp.weixin.qq.com/s/jZMZmxHJg3vXVfO4Ditfqg" target="_blank" rel="noopener">http://mp.weixin.qq.com/s/jZMZmxHJg3vXVfO4Ditfqg</a><br></font>
+      
+    </div>
+    <footer>
+      
+        
+        
+  <div class="tags">
+    <a href="/tags/java/">java</a>
+  </div>
+
+        <div class = "counter">
+  <span id="busuanzi_container_page_pv" style="display:none">
+      总访问&nbsp<span id="busuanzi_value_page_pv"></span>&nbsp次
+  </span>
+</div>
+        
+  <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a title="分享到QQ空间" href="#" class="bds_qzone" data-cmd="qzone"></a><a title="分享到新浪微博" href="#" class="bds_tsina" data-cmd="tsina"></a><a title="分享到腾讯微博" href="#" class="bds_tqq" data-cmd="tqq"></a><a title="分享到人人网" href="#" class="bds_renren" data-cmd="renren"></a><a title="分享到微信" href="#" class="bds_weixin" data-cmd="weixin"></a></div>
+  <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+  
+<section id = "relate">
+	
+                <div id="null"></div>
+	
+</section>
+
+
+  
+    <section id="comment">
+    <!--   <h1 class="title">Comments</h1> -->
+    
+        <script type="text/javascript" id="wumiiComments">
+            var wumiiPermaLink = "https://ztyu.github.io/2018/02/09/jvm/"; //请用代码生成文章永久的链接
+            var wumiiTitle = "jvm"; //请用代码生成文章标题
+            var wumiiSitePrefix = "http://lupeng.me"; 
+            var wumiiCommentParams = "&pf=JAVASCRIPT";
+        </script>
+        <script type="text/javascript" src="http://widget.wumii.cn/ext/cw/widget"></script>
+      
+    </section>
+
+
+
+
+</div></div>
+      <aside id="sidebar" class="alignright">
+   
+
+
+  <!--<div class="widget tag">
+  <h3 class="title">微信公众账号</h3>
+    <ul class="entry">
+      <img src="/img/default/qrcode.jpg" alt="欢迎关注个人公众账号" style= "width: 100%">
+    </ul>
+</div>-->
+
+
+  <!--<div class="widget tag">
+  <h3 class="title">Calendar</h3>
+  <div id="calendar"></div>
+</div>
+-->
+
+
+
+  <!--
+-->
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">Tag Cloud</h3>
+  <div class="entry">
+    <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/架构/" style="font-size: 10px;">架构</a> <a href="/tags/生活/" style="font-size: 10px;">生活</a> <a href="/tags/线程/" style="font-size: 10px;">线程</a> <a href="/tags/设计模式/" style="font-size: 10px;">设计模式</a>
+  </div>
+</div>
+
+
+
+  
+  <div class="widget tag">
+    <h3 class="title">归档</h3>
+	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/">公元 2018 年</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/">公元 2017 年</a><span class="archive-list-count">2</span></li></ul>
+  </div>
+
+</aside>
+      <div class="clearfix"></div>
+    </div>
+  
+  <footer id="footer"><div class="footer-content inner">
+  <div class="align">
+  
+    &copy; 2018 idiot-yu
+    
+  </div>
+ <!-- <div class="alignright">
+    Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, Theme
+    <a href="https://github.com/pengloo53/Hexo-theme-light_cn">light_cn</a>, 
+    <p>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a></p>
+  </div>-->
+
+
+  <div class="clearfix"></div>
+</div></footer>
+  <script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<!-- calendar widget -->
+
+  <script src="/js/calendar.js"></script>
+  <script src="/js/languages.js"></script>
+  <script type="text/javascript">
+    $(function() {
+    
+      $('#calendar').aCalendar('zh-CN',{single:undefined, root:'calendar'});
+    
+    });
+  </script>
+
+
+<!-- 『不蒜子』计数服务 -->
+<script async src="http://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!-- wumii关联推荐 -->
+<script type="text/javascript" src="http://widget.wumii.cn/ext/relatedItemsWidget"></script>
+
+<!-- 百度推荐 -->
+
+	<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+	  hm.src = "//hm.baidu.com/hm.js?9acf0cedd48dc53be256ede5a98c2aaa";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+	</script>
+
+
+<!-- 返回顶部 -->
+<div id="toTop">
+	<a href="#">▲</a>
+	<a href="#footer">▼</a>
+</div>
+
+<!-- 站内搜索-Swiftype -->
+<!-- <script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+  
+  _st('install','sC-iNFrvTTNtiXEVNwo1','2.0.0');
+</script> -->
+
+<!-- fancybox -->
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>
